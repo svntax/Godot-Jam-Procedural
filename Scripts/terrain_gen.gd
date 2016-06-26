@@ -13,7 +13,8 @@ var terrain = []
 var r_pressed = false
 var g_pressed = false
 
-var scene = load("res://Scenes/terrain_wall.scn") 
+var scene = load("res://Scenes/terrain_wall.scn")
+var outerWallScene = load("res://Scenes/outer_wall.scn")
 
 func _ready():
 	for i in range(TERRAIN_WIDTH):
@@ -24,6 +25,7 @@ func _ready():
 	generateTerrain()
 	for i in range(3):
 		cellularAutomata()
+	spawnOuterWalls()
 	spawnWalls()
 	
 	set_process(true)
@@ -47,8 +49,18 @@ func _input(event):
 			g_pressed = !g_pressed	"""
 
 func _draw():
-	#drawTerrain()
-	pass
+	var w = TERRAIN_WIDTH * TILE_SIZE - (TILE_SIZE / 2)
+	var h = TERRAIN_HEIGHT * TILE_SIZE - (TILE_SIZE / 2)
+	draw_rect(Rect2(0, 0, w, h), Color(255, 255, 255))
+
+func getWidth():
+	return TERRAIN_WIDTH
+
+func getHeight():
+	return TERRAIN_HEIGHT
+	
+func getTileSize():
+	return TILE_SIZE
 
 func generateTerrain():
 	randomize()
@@ -125,3 +137,40 @@ func spawnWalls():
 				add_child(block)
 			#elif(terrain[i][j] == 0):
 				#draw_rect(block, Color(1, 1, 1, 1))
+
+func spawnOuterWalls():
+	var wallTop = outerWallScene.instance()
+	var shapeTop = RectangleShape2D.new()
+	shapeTop.set_extents(Vector2(TERRAIN_WIDTH*TILE_SIZE/2, 4))
+	wallTop.set_pos(Vector2(TERRAIN_WIDTH*TILE_SIZE/2, -8))
+	wallTop.add_shape(shapeTop)
+	add_child(wallTop)
+	
+	var wallBottom = outerWallScene.instance()
+	var shapeBottom = RectangleShape2D.new()
+	shapeBottom.set_extents(Vector2(TERRAIN_WIDTH*TILE_SIZE/2, 4))
+	wallBottom.set_pos(Vector2(TERRAIN_WIDTH*TILE_SIZE/2, TERRAIN_HEIGHT*TILE_SIZE))
+	wallBottom.add_shape(shapeBottom)
+	add_child(wallBottom)
+	
+	var wallTop = outerWallScene.instance()
+	var shapeTop = RectangleShape2D.new()
+	shapeTop.set_extents(Vector2(TERRAIN_WIDTH*TILE_SIZE/2, 4))
+	wallTop.set_pos(Vector2(TERRAIN_WIDTH*TILE_SIZE/2, -8))
+	wallTop.add_shape(shapeTop)
+	add_child(wallTop)
+	
+	var wallLeft = outerWallScene.instance()
+	var shapeLeft = RectangleShape2D.new()
+	shapeLeft.set_extents(Vector2(4, TERRAIN_HEIGHT*TILE_SIZE/2))
+	wallLeft.set_pos(Vector2(-8, TERRAIN_HEIGHT*TILE_SIZE/2))
+	wallLeft.add_shape(shapeLeft)
+	add_child(wallLeft)
+	
+	var wallRight = outerWallScene.instance()
+	var shapeRight = RectangleShape2D.new()
+	shapeRight.set_extents(Vector2(4, TERRAIN_HEIGHT*TILE_SIZE/2))
+	wallRight.set_pos(Vector2(TERRAIN_WIDTH*TILE_SIZE, TERRAIN_HEIGHT*TILE_SIZE/2))
+	wallRight.add_shape(shapeRight)
+	add_child(wallRight)
+
