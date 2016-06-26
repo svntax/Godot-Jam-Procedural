@@ -13,9 +13,17 @@ var knockbackX = 8
 var knockbackY = 3
 var onGround = false
 
+var rockProjectileScene = load("res://Scenes/rock_projectile.scn")
+
 func _ready():
 	set_fixed_process(true)
+	set_process_input(true)
 	
+func _input(event):
+	if(event.type == InputEvent.MOUSE_BUTTON):
+		if(event.button_index == BUTTON_LEFT && event.pressed):
+			shootProjectile(event.pos)
+
 func _fixed_process(delta):
 	#vel.x = 0
 	
@@ -45,7 +53,22 @@ func _fixed_process(delta):
 	
 	#gravity
 	vel.y += gravity
-	
+
+func shootProjectile(mousePos):
+	var cam = find_node("Camera2D")
+	var w = get_viewport().get_rect().size.x
+	var h = get_viewport().get_rect().size.y
+	var cx = cam.get_camera_pos().x - (w / 2)
+	var cy = cam.get_camera_pos().y - (h / 2)
+	var mx = cx + mousePos.x
+	var my = cy + mousePos.y
+	var angle = atan2(my - get_pos().y, mx - get_pos().x)
+	var dir = Vector2(cos(angle), -sin(angle))
+	var rock = rockProjectileScene.instance()
+	rock.set_pos(Vector2(get_pos().x, get_pos().y - 64))
+	rock.setVelocity(dir.x*5, -dir.y*5)
+	get_parent().add_child(rock)
+
 func moveX():
 	var currentVel = Vector2(vel.x, 0)
 	move(currentVel)
