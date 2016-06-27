@@ -56,6 +56,7 @@ func _fixed_process(delta):
 		if(animTimer >= find_node("Particles2D").get_lifetime() - 0.1):
 			set_pos(Vector2(-100, -100))
 			get_node("Particles2D").set_emitting(false)
+			get_node("/root/globals").incrementKills()
 			queue_free()
 	
 func checkCollision():

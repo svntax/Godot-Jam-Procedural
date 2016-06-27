@@ -23,6 +23,11 @@ func toggle():
 
 func _on_YesButton_pressed():
 	get_tree().set_pause(false)
+	
+	var musicHandler = get_node("/root/music_handler")
+	if(musicHandler.is_playing()):
+		musicHandler.stop()
+	
 	get_tree().change_scene("res://Scenes/main_menu.scn")
 	hide()
 

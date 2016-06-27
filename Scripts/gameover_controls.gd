@@ -19,8 +19,21 @@ func toggle():
 	var x = playerCam.get_camera_pos().x - (w / 4)
 	var y = playerCam.get_camera_pos().y - (h / 4)
 	set_pos(Vector2(x, y + 40))
+	
+	var levelLabel = get_node("LevelLabel")
+	var killsLabel = get_node("KillsLabel")
+	var level = get_node("/root/globals").getLevelReached()
+	var kills = get_node("/root/globals").getEnemiesKilled()
+	levelLabel.set_text("Level reached: " + str(level))
+	killsLabel.set_text("Enemies killed: " + str(kills))
 
 func _on_Button_pressed():
 	get_tree().set_pause(false)
+	
+	var musicHandler = get_node("/root/music_handler")
+	if(musicHandler.is_playing()):
+		musicHandler.stop()
+	
+	get_node("/root/globals").resetStats()
 	get_tree().change_scene("res://Scenes/main_menu.scn")
 	hide()

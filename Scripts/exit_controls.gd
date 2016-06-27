@@ -9,6 +9,7 @@ func _ready():
 	
 func _fixed_process(delta):
 	if(overlaps_body(player)):
+		get_node("/root/globals").incrementLevel()
 		for enemy in get_tree().get_nodes_in_group("enemies"):
 			enemy.queue_free()
 		get_tree().reload_current_scene()
