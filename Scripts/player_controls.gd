@@ -25,7 +25,11 @@ func _input(event):
 			shootProjectile(event.pos)
 
 func _fixed_process(delta):
-	#vel.x = 0
+	if(Input.is_action_pressed("UI_PAUSE")):
+		if(!get_tree().is_paused()):
+			var pauseMenu = get_parent().find_node("PauseMenuPopup")
+			pauseMenu.toggle()
+			get_tree().set_pause(true)
 	
 	if(test_move(Vector2(0, 1))):
 		onGround = true

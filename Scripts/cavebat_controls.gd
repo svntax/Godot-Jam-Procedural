@@ -62,9 +62,11 @@ func checkCollision():
 		var other = get_collider()
 		if(other.get_instance_ID() == player.get_instance_ID()):
 			if(!dead):
-				dead = true
-				get_node("Particles2D").set_emitting(true)
-				get_node("CollisionShape2D").set_trigger(true)
+				kill()
 				get_parent().find_node("Lives").damage()
 				player.knockback(Vector2(velX, velY))
 
+func kill():
+	dead = true
+	get_node("Particles2D").set_emitting(true)
+	get_node("CollisionShape2D").set_trigger(true)

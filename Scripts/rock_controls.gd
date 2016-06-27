@@ -32,6 +32,10 @@ func _fixed_process(delta):
 			debris.set_pos(Vector2(debrisX, debrisY))
 			get_parent().add_child(debris)
 			debris.spawnEarth()
+			
+			if(other.is_in_group("enemies")):
+				other.kill()
+			
 			queue_free()
 
 func setVelocity(vx, vy):
