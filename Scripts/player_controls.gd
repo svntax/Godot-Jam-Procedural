@@ -12,9 +12,14 @@ var frictionX = 0.6
 var knockbackX = 8
 var knockbackY = 3
 var onGround = false
+
 var teleportCoolingDown = false
 var teleportTimer = 0
 var maxTeleportTimer = 0.1 #teleport cooldown
+
+var shootingCoolingDown = false
+var shootingTimer = 0
+var maxShootingTimer = 1 #shooting cooldown
 
 var rockProjectileScene = load("res://Scenes/rock_projectile.scn")
 var fireProjectileScene = load("res://Scenes/fire_projectile.scn")
@@ -26,11 +31,15 @@ func _ready():
 func _input(event):
 	if(event.type == InputEvent.MOUSE_BUTTON):
 		if(event.button_index == BUTTON_LEFT && event.pressed):
-			shootProjectile(event.pos)
+			if(!shootingCoolingDown):
+				shootProjectile(event.pos)
+				shootingCoolingDown = true
 		elif(event.button_index == BUTTON_RIGHT && event.pressed):
 			#if(!teleportCoolingDown):
 				#teleport(event.pos)
-			shootFireProjectile(event.pos)
+			if(!shootingCoolingDown):
+				shootFireProjectile(event.pos)
+				shootingCoolingDown = true
 
 func _fixed_process(delta):
 	if(Input.is_action_pressed("UI_PAUSE")):
@@ -45,6 +54,13 @@ func _fixed_process(delta):
 		if(teleportTimer >= maxTeleportTimer):
 			teleportCoolingDown = false
 			teleportTimer = 0
+			
+	#shooting cooldown check
+	if(shootingCoolingDown):
+		shootingTimer += delta
+		if(shootingTimer >= maxShootingTimer):
+			shootingCoolingDown = false
+			shootingTimer = 0
 	
 	if(test_move(Vector2(0, 1))):
 		onGround = true
@@ -86,7 +102,8 @@ func shootProjectile(mousePos):
 	var angle = atan2(my - get_pos().y, mx - get_pos().x)
 	var dir = Vector2(cos(angle), -sin(angle))
 	var rock = rockProjectileScene.instance()
-	rock.set_pos(Vector2(get_pos().x, get_pos().y - 64))
+	#rock.set_pos(Vector2(get_pos().x, get_pos().y - 64))
+	rock.set_pos(Vector2(get_pos().x + (dir.x*64), get_pos().y - (dir.y*64)))
 	rock.setVelocity(dir.x*5, -dir.y*5)
 	get_parent().add_child(rock)
 
@@ -102,7 +119,8 @@ func shootFireProjectile(mousePos):
 	var angle = atan2(my - get_pos().y, mx - get_pos().x)
 	var dir = Vector2(cos(angle), -sin(angle))
 	var fire = fireProjectileScene.instance()
-	fire.set_pos(Vector2(get_pos().x, get_pos().y - 64))
+	#fire.set_pos(Vector2(get_pos().x, get_pos().y - 64))
+	fire.set_pos(Vector2(get_pos().x + (dir.x*64), get_pos().y - (dir.y*64)))
 	fire.setVelocity(dir.x*5, -dir.y*5)
 	get_parent().add_child(fire)
 

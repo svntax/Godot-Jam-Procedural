@@ -25,18 +25,17 @@ func _fixed_process(delta):
 		move(vel)
 		var other = get_collider()
 		#spawn debris if it hit something
-		if(other.get_instance_ID() != player.get_instance_ID()):
-			var debris = debrisScene.instance()
-			var debrisX = get_pos().x - debris.getOffset()
-			var debrisY = get_pos().y - debris.getOffset()
-			debris.set_pos(Vector2(debrisX, debrisY))
-			get_parent().add_child(debris)
-			debris.spawnEarth()
-			
-			if(other.is_in_group("enemies")):
-				other.kill()
-			
-			queue_free()
+		#if(other.get_instance_ID() != player.get_instance_ID()):
+		var debris = debrisScene.instance()
+		var debrisX = get_pos().x - debris.getOffset()
+		var debrisY = get_pos().y - debris.getOffset()
+		debris.set_pos(Vector2(debrisX, debrisY))
+		get_parent().add_child(debris)
+		debris.spawnEarth()
+		
+		if(other.is_in_group("enemies")):
+			other.kill()
+		queue_free()
 
 func setVelocity(vx, vy):
 	vel.x = vx

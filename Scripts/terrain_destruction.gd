@@ -11,7 +11,10 @@ func _ready():
 	set_fixed_process(true)
 	
 func _fixed_process(delta):
-	if(destroyingTerrain):
+	#print("P: " + str(player.get_pos()))
+	#print("Parent: " + str(get_parent().get_pos()))
+	#print("Area: " + str(get_pos()))
+	if(destroyingTerrain):		
 		var others = get_overlapping_bodies()
 		for obj in others:
 			if(obj.is_in_group("dirt_group")):
