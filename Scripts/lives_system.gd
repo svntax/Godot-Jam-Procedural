@@ -26,6 +26,9 @@ func _process(delta):
 	var y = playerCam.get_camera_pos().y - (h / 2) + texture.get_height()*2
 	set_pos(Vector2(x, y))
 
+func setLives(amount):
+	LIVES = amount
+
 func damage():
 	if(LIVES > 0):
 		get_children()[LIVES].queue_free()

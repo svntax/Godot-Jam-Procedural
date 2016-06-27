@@ -24,6 +24,9 @@ func _fixed_process(delta):
 		var pos = Vector2(sprite.get_pos().x + 16, sprite.get_pos().y + 16)
 		pos = get_pos()
 		var exceptions = get_tree().get_nodes_in_group("enemies")
+		var dirtGroup = get_tree().get_nodes_in_group("dirt_group")
+		for dirt in dirtGroup:
+			exceptions.append(dirt)
 		exceptions.append(self)
 		exceptions.append(get_tree().get_root().get_node("Game").get_node("Player"))
 		var up = !space_state.intersect_ray( pos, Vector2(pos.x, pos.y - 32), exceptions).empty()
@@ -64,3 +67,5 @@ func _fixed_process(delta):
 			sprite.set_region_rect(Rect2(96, 96, 32, 32))
 		isTiled = true
 
+func setTiled(tiled):
+	isTiled = tiled

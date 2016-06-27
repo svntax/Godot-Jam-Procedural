@@ -17,6 +17,7 @@ var teleportTimer = 0
 var maxTeleportTimer = 0.1 #teleport cooldown
 
 var rockProjectileScene = load("res://Scenes/rock_projectile.scn")
+var fireProjectileScene = load("res://Scenes/fire_projectile.scn")
 
 func _ready():
 	set_fixed_process(true)
@@ -27,8 +28,9 @@ func _input(event):
 		if(event.button_index == BUTTON_LEFT && event.pressed):
 			shootProjectile(event.pos)
 		elif(event.button_index == BUTTON_RIGHT && event.pressed):
-			if(!teleportCoolingDown):
-				teleport(event.pos)
+			#if(!teleportCoolingDown):
+				#teleport(event.pos)
+			shootFireProjectile(event.pos)
 
 func _fixed_process(delta):
 	if(Input.is_action_pressed("UI_PAUSE")):
@@ -87,6 +89,22 @@ func shootProjectile(mousePos):
 	rock.set_pos(Vector2(get_pos().x, get_pos().y - 64))
 	rock.setVelocity(dir.x*5, -dir.y*5)
 	get_parent().add_child(rock)
+
+func shootFireProjectile(mousePos):
+	get_node("/root/sound_effects").play("throw_rock")
+	var cam = find_node("Camera2D")
+	var w = get_viewport().get_rect().size.x
+	var h = get_viewport().get_rect().size.y
+	var cx = cam.get_camera_pos().x - (w / 2)
+	var cy = cam.get_camera_pos().y - (h / 2)
+	var mx = cx + mousePos.x
+	var my = cy + mousePos.y
+	var angle = atan2(my - get_pos().y, mx - get_pos().x)
+	var dir = Vector2(cos(angle), -sin(angle))
+	var fire = fireProjectileScene.instance()
+	fire.set_pos(Vector2(get_pos().x, get_pos().y - 64))
+	fire.setVelocity(dir.x*5, -dir.y*5)
+	get_parent().add_child(fire)
 
 func teleport(mousePos):
 	var cam = find_node("Camera2D")

@@ -9,5 +9,5 @@ func _ready():
 	
 func _fixed_process(delta):
 	if(overlaps_body(player)):
-		print("Exit found!")
-
+		get_tree().reload_current_scene()
+		
