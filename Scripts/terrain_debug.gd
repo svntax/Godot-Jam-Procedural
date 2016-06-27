@@ -11,7 +11,6 @@ func _ready():
 	terrainNode = scene.instance()
 	add_child(terrainNode)
 	#set_process_input(true)
-	pass
 
 func _input(event):
 	if(event.type == InputEvent.KEY):

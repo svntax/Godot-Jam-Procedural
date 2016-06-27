@@ -52,6 +52,7 @@ func _fixed_process(delta):
 	#jump
 	if(Input.is_key_pressed(KEY_SPACE) && onGround):
 		vel.y = -jumpSpeed
+		get_node("/root/sound_effects").play("jump1")
 		
 	if(Input.is_key_pressed(KEY_A)):
 		vel.x = -moveSpeed
@@ -72,6 +73,7 @@ func _fixed_process(delta):
 	vel.y += gravity
 
 func shootProjectile(mousePos):
+	get_node("/root/sound_effects").play("throw_rock")
 	var cam = find_node("Camera2D")
 	var w = get_viewport().get_rect().size.x
 	var h = get_viewport().get_rect().size.y
@@ -132,6 +134,7 @@ func frictionX():
 			vel.x = 0
 
 func knockback(dir):
+	get_node("/root/sound_effects").play("hit1")
 	var mx
 	var my
 	if(dir.x < 0):

@@ -16,6 +16,7 @@ func getOffset():
 	return (SPAWN_RANGE*size) / 2
 	
 func spawnEarth():
+	get_node("/root/sound_effects").play("rock_explode")
 	var space_state = get_world_2d().get_direct_space_state()
 	for i in range(SPAWN_RANGE):
 		for j in range(SPAWN_RANGE):
