@@ -1,8 +1,8 @@
 extends Node2D
 
 var TILE_SIZE = 32
-var TERRAIN_WIDTH = 60
-var TERRAIN_HEIGHT = 38
+var TERRAIN_WIDTH = 64
+var TERRAIN_HEIGHT = 64
 var INITIAL_CHANCE = 0.4
 var ENEMY_SPAWN_CHANCE = 0.5
 
@@ -58,6 +58,8 @@ func _draw():
 	var w = TERRAIN_WIDTH * TILE_SIZE - (TILE_SIZE / 2)
 	var h = TERRAIN_HEIGHT * TILE_SIZE - (TILE_SIZE / 2)
 	draw_rect(Rect2(0, 0, w, h), Color(255, 255, 255))
+	
+	#drawTerrain()
 
 func getWidth():
 	return TERRAIN_WIDTH
