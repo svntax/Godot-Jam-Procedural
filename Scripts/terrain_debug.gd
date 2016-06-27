@@ -10,7 +10,8 @@ var terrainNode
 func _ready():
 	terrainNode = scene.instance()
 	add_child(terrainNode)
-	set_process_input(true)
+	#set_process_input(true)
+	pass
 
 func _input(event):
 	if(event.type == InputEvent.KEY):
@@ -18,6 +19,8 @@ func _input(event):
 			if(!r_pressed):
 				terrainNode.queue_free()
 				remove_child(terrainNode)
+				for enemy in get_tree().get_nodes_in_group("enemies"):
+					enemy.queue_free()
 				terrainNode = scene.instance()
 				add_child(terrainNode)
 			r_pressed = !r_pressed

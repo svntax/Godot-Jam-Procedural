@@ -3,6 +3,7 @@ extends KinematicBody2D
 
 var SPEED = 1
 var THRESHOLD = 8
+var AGGRO_RANGE = 600
 
 var anim
 var frames
@@ -15,7 +16,7 @@ var animTimer = 0
 func _ready():
 	anim = get_node("AnimationPlayer")
 	frames = get_node("AnimatedSprite")
-	player = get_parent().get_node("Player")
+	player = get_tree().get_nodes_in_group("players")[0]
 	set_fixed_process(true)
 	
 func _fixed_process(delta):
@@ -42,8 +43,10 @@ func _fixed_process(delta):
 			velY = SPEED
 		if(abs(py - by) <= THRESHOLD):
 			velY = 0
-		move(Vector2(velX, 0))
-		move(Vector2(0, velY))
+			
+		if(get_pos().distance_to(player.get_pos()) <= AGGRO_RANGE):
+			move(Vector2(velX, 0))
+			move(Vector2(0, velY))
 		
 		checkCollision()
 	else:
@@ -63,7 +66,7 @@ func checkCollision():
 		if(other.get_instance_ID() == player.get_instance_ID()):
 			if(!dead):
 				kill()
-				get_parent().find_node("Lives").damage()
+				get_tree().get_nodes_in_group("lives_ui")[0].damage()
 				player.knockback(Vector2(velX, velY))
 
 func kill():

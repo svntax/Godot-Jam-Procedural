@@ -4,6 +4,7 @@ var TILE_SIZE = 32
 var TERRAIN_WIDTH = 60
 var TERRAIN_HEIGHT = 38
 var INITIAL_CHANCE = 0.4
+var ENEMY_SPAWN_CHANCE = 0.75
 
 var MIN_FOR_ALIVE = 3
 var MIN_FOR_DEAD = 4
@@ -15,6 +16,8 @@ var g_pressed = false
 
 var scene = load("res://Scenes/terrain_wall.scn")
 var outerWallScene = load("res://Scenes/outer_wall.scn")
+var cavebatScene = load("res://Scenes/cavebat.scn")
+var caveExitScene = load("res://Scenes/cave_exit.scn")
 
 func _ready():
 	for i in range(TERRAIN_WIDTH):
@@ -27,6 +30,9 @@ func _ready():
 		cellularAutomata()
 	spawnOuterWalls()
 	spawnWalls()
+	var spawnPoints = spawnCaveExit()
+	spawnEnemies()
+	spawnPlayer(spawnPoints)
 	
 	set_process(true)
 	#set_process_input(true)
@@ -138,6 +144,53 @@ func spawnWalls():
 			#elif(terrain[i][j] == 0):
 				#draw_rect(block, Color(1, 1, 1, 1))
 
+func spawnEnemies():
+	for i in range(TERRAIN_WIDTH):
+		for j in range(TERRAIN_HEIGHT):
+			randomize()
+			if(randf() > ENEMY_SPAWN_CHANCE):
+				continue
+			if(terrain[i][j] == 0):
+				if(getNeighborsCount(terrain, i, j) == 5):
+					var cavebat = cavebatScene.instance()
+					cavebat.set_pos(Vector2(i*TILE_SIZE, j*TILE_SIZE))
+					get_parent().add_child(cavebat)
+
+func spawnCaveExit():
+	var spawnedExit = false
+	var spawnPoints = []
+	for i in range(TERRAIN_WIDTH):
+		for j in range(TERRAIN_HEIGHT):
+			if(i > 5 && j > 5 && i < TERRAIN_WIDTH - 5 && j < TERRAIN_HEIGHT - 5):
+				var center = terrain[i][j]
+				var left = terrain[i-1][j]
+				var right = terrain[i+1][j]
+				var down = terrain[i][j+1]
+				var up = terrain[i][j-1]
+				var upLeft = terrain[i-1][j-1]
+				var upRight = terrain[i+1][j-1]
+				var empty = center + left + right + up + upLeft + upRight
+				if(empty == 0 && down == 1):
+					spawnPoints.append(Vector2(i*TILE_SIZE, j*TILE_SIZE-8))
+					#var caveExit = caveExitScene.instance()
+					#caveExit.set_pos(Vector2(i*TILE_SIZE, j*TILE_SIZE - 8))
+					#get_parent().add_child(caveExit)
+					#return
+	randomize()
+	var choice = randi() % spawnPoints.size()
+	var caveExit = caveExitScene.instance()
+	caveExit.set_pos(spawnPoints[choice])
+	get_parent().add_child(caveExit)
+	spawnPoints.remove(spawnPoints.find(spawnPoints[choice]))
+	return spawnPoints
+
+func spawnPlayer(spawnPoints):
+	var player = get_tree().get_nodes_in_group("players")[0]
+	randomize()
+	var choice = randi() % spawnPoints.size()
+	var newPos = spawnPoints[choice]
+	player.set_pos(Vector2(newPos.x, newPos.y))
+
 func spawnOuterWalls():
 	var wallTop = outerWallScene.instance()
 	var shapeTop = RectangleShape2D.new()
@@ -173,4 +226,3 @@ func spawnOuterWalls():
 	wallRight.set_pos(Vector2(TERRAIN_WIDTH*TILE_SIZE, TERRAIN_HEIGHT*TILE_SIZE/2))
 	wallRight.add_shape(shapeRight)
 	add_child(wallRight)
-

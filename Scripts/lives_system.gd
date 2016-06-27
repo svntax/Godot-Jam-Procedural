@@ -31,4 +31,6 @@ func damage():
 		get_children()[LIVES].queue_free()
 		LIVES -= 1
 	if(LIVES <= 0):
-		print("You died!")
+		var gameOverMenu = get_parent().find_node("GameOverMenu")
+		gameOverMenu.toggle()
+		get_tree().set_pause(true)

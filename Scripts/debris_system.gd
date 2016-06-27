@@ -2,7 +2,7 @@
 extends Node2D
 
 var dirt
-var SPAWN_RANGE = 8
+var SPAWN_RANGE = 6
 var SPAWN_CHANCE = 0.7
 var MIN_DIST_AWAY = 64
 var size = 16

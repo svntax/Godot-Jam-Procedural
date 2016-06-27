@@ -12,6 +12,9 @@ var frictionX = 0.6
 var knockbackX = 8
 var knockbackY = 3
 var onGround = false
+var teleportCoolingDown = false
+var teleportTimer = 0
+var maxTeleportTimer = 0.1 #teleport cooldown
 
 var rockProjectileScene = load("res://Scenes/rock_projectile.scn")
 
@@ -23,6 +26,9 @@ func _input(event):
 	if(event.type == InputEvent.MOUSE_BUTTON):
 		if(event.button_index == BUTTON_LEFT && event.pressed):
 			shootProjectile(event.pos)
+		elif(event.button_index == BUTTON_RIGHT && event.pressed):
+			if(!teleportCoolingDown):
+				teleport(event.pos)
 
 func _fixed_process(delta):
 	if(Input.is_action_pressed("UI_PAUSE")):
@@ -30,6 +36,13 @@ func _fixed_process(delta):
 			var pauseMenu = get_parent().find_node("PauseMenuPopup")
 			pauseMenu.toggle()
 			get_tree().set_pause(true)
+	
+	#teleport cooldown check
+	if(teleportCoolingDown):
+		teleportTimer += delta
+		if(teleportTimer >= maxTeleportTimer):
+			teleportCoolingDown = false
+			teleportTimer = 0
 	
 	if(test_move(Vector2(0, 1))):
 		onGround = true
@@ -72,6 +85,32 @@ func shootProjectile(mousePos):
 	rock.set_pos(Vector2(get_pos().x, get_pos().y - 64))
 	rock.setVelocity(dir.x*5, -dir.y*5)
 	get_parent().add_child(rock)
+
+func teleport(mousePos):
+	var cam = find_node("Camera2D")
+	var w = get_viewport().get_rect().size.x
+	var h = get_viewport().get_rect().size.y
+	var cx = cam.get_camera_pos().x - (w / 2)
+	var cy = cam.get_camera_pos().y - (h / 2)
+	var mx = cx + mousePos.x
+	var my = cy + mousePos.y
+	
+	var terrain = get_tree().get_nodes_in_group("terrain_group")[0]
+	var terrainPos = terrain.get_pos()
+	var size = terrain.getTileSize()
+	if(mx < terrainPos.x || mx > terrainPos.x + terrain.getWidth()*size):
+		return
+	if(my < terrainPos.y || my > terrainPos.y + terrain.getHeight()*size):
+		return
+	
+	var prevPos = get_pos()
+	set_pos(Vector2(mx, my))
+	#if teleport unsuccessful, no cooldown
+	if(is_colliding()):
+		set_pos(prevPos)
+		teleportCoolingDown = false
+	else:
+		teleportCoolingDown = true
 
 func moveX():
 	var currentVel = Vector2(vel.x, 0)
