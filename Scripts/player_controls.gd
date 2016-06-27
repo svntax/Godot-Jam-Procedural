@@ -12,6 +12,7 @@ var frictionX = 0.6
 var knockbackX = 8
 var knockbackY = 3
 var onGround = false
+var facingLeft = true
 
 var teleportCoolingDown = false
 var teleportTimer = 0
@@ -74,21 +75,40 @@ func _fixed_process(delta):
 		
 	if(Input.is_key_pressed(KEY_A)):
 		vel.x = -moveSpeed
+		facingLeft = true
 	if(Input.is_key_pressed(KEY_D)):
 		vel.x = moveSpeed
+		facingLeft = false
 	
 	#limit falling speed
 	if(vel.y > maxSpeedY):
 		vel.y = maxSpeedY
 	if(abs(vel.x) > maxSpeedX):
 		vel.x = sign(vel.x) * abs(vel.x)
-		
+	
+	updateSprite()
 	frictionX()
 	moveX()
 	moveY()
 	
 	#gravity
 	vel.y += gravity
+
+func updateSprite():
+	if(facingLeft && get_node("Sprite").is_flipped_h()):
+		get_node("Sprite").set_flip_h(false)
+		get_node("ParticlesLeft").set_emitting(true)
+		get_node("ParticlesRight").set_emitting(false)
+	elif(!facingLeft && !get_node("Sprite").is_flipped_h()):
+		get_node("Sprite").set_flip_h(true)
+		get_node("ParticlesLeft").set_emitting(false)
+		get_node("ParticlesRight").set_emitting(true)
+	
+	var region = get_node("Sprite").get_region_rect()
+	if(vel.x == 0 && region.pos.x == 0):
+		get_node("Sprite").set_region_rect(Rect2(32, 0, 32, 32))
+	elif(vel.x != 0 && region.pos.x == 32):
+		get_node("Sprite").set_region_rect(Rect2(0, 0, 32, 32))
 
 func shootProjectile(mousePos):
 	get_node("/root/sound_effects").play("throw_rock")
